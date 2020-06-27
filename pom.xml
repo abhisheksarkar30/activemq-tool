@@ -1,0 +1,142 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.abhi.tools.activemq</groupId>
+	<artifactId>activemq-tool</artifactId>
+	<version>1</version>
+	<name>activemq-tool</name>
+	<description>A tool to upload, transfer/copy, download messages</description>
+
+	<properties>
+		<java.version>1.7</java.version>
+	</properties>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-all</artifactId>
+			<version>5.14.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.11.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jms -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-jms</artifactId>
+		    <version>3.2.4.RELEASE</version>
+		</dependency>
+	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>repo1.maven</id>
+			<name>Maven Central Repo</name>
+			<url>https://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
+	
+	<!-- <pluginRepositories>
+	    <pluginRepository>
+	      <id>mvnplugins.fusesource.org</id>
+	      <url>http://mvnplugins.fusesource.org/repo/release</url>
+	      <releases>
+	        <enabled>true</enabled>
+	      </releases>
+	    </pluginRepository>
+  	</pluginRepositories> -->
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+				</configuration>
+			</plugin>
+
+			<!-- include all the dependencies into the jar so it's easier to execute 
+				the example -->
+			<!-- <plugin>
+				<groupId>org.fusesource.mvnplugins</groupId>
+				<artifactId>maven-uberize-plugin</artifactId>
+				<version>1.45</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>uberize</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.fusesource.mvnplugins.uberize.transformer.ManifestEditor">
+								    <manifestEntries>
+								    	<Main-Class>edu.abhi.tools.activemq.ApplicationLoader</Main-Class>
+								    	<Class-Path>conf/</Class-Path>
+								    </manifestEntries>
+							    </transformer>
+						    </transformers>
+					    </configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>edu.abhi.tools.activemq.ApplicationLoader</mainClass>
+						</manifest>
+						<manifestEntries>
+             				<Class-Path>conf/</Class-Path>
+                    	</manifestEntries>
+					</archive>
+					<outputDirectory>apps</outputDirectory>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+			    <artifactId>maven-dependency-plugin</artifactId>
+			    <executions>
+			        <execution>
+			            <phase>install</phase>
+			            <goals>
+			                <goal>copy-dependencies</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>apps/lib</outputDirectory>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
