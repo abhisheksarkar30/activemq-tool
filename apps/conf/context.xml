@@ -3,64 +3,31 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
-	<!--context:property-placeholder location="classpath:META-INF/spring/jms.properties"/ -->
-	<bean id="jmsProperties"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>configure.properties</value>
-			</list>
-		</property>
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-	</bean>
 	
 	<!-- Active MQ Connection Factory -->
-	 <bean id="notifJmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+	 <bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<property name="brokerURL" value="${activemq.uri}" />
 		<property name="redeliveryPolicy">
 			<bean class="org.apache.activemq.RedeliveryPolicy">
 				<property name="maximumRedeliveries" value="${activemq.maxRedeliveries}" />
 			</bean>
 		</property>
-	</bean> 
-	
-	<bean id="cachingConnectionFactory"
-		class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory" ref="notifJmsConnectionFactory" />
-		<property name="reconnectOnException" value="true" />
 	</bean>
 	
 	<!-- JMS Queue Connection Factory -->
-	<bean id="jmsQueueConnectionFactory"
+	<bean id="singleConnectionFactory"
 		class="org.springframework.jms.connection.SingleConnectionFactory102">
-		<property name="targetConnectionFactory">
-			<ref bean="notifJmsConnectionFactory" />
-		</property>
-		<property name="pubSubDomain">
-			<value>false</value>
-		</property>
+		<property name="targetConnectionFactory"><ref bean="activemqConnectionFactory" /></property>
+		<property name="pubSubDomain"><value>false</value></property>
 	</bean>
-
-	<!-- JMS Destination Resolver -->
-	<bean id="jmsDestinationResolver"
-		class="org.springframework.jms.support.destination.DynamicDestinationResolver">
-	</bean>
-
-	<!-- JMS Queue Template -->
-	<bean id="jmsQueueTemplate" class="org.springframework.jms.core.JmsTemplate102">
-		<property name="connectionFactory">
-			<ref bean="jmsQueueConnectionFactory" />
+	
+	<!--Jsm Configuration Properties"/ -->
+	<bean id="jmsProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list><value>configure.properties</value></list>
 		</property>
-		<property name="destinationResolver">
-			<ref bean="jmsDestinationResolver" />
-		</property>
-		<property name="pubSubDomain">
-			<value>false</value>
-		</property>
-		<property name="receiveTimeout">
-			<value>20000</value>
-		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
 	</bean>
 	
 	<bean id="ResourceLoader" class="edu.abhi.tools.activemq.ResourceLoader" init-method="init"/>

@@ -14,7 +14,7 @@ public class Constants {
 	public static String ACTION_TYPE = "activemq.action";
 	public static String FOLDER_LOCATION = "message.upload.folder";
 	public static String PARTICIPANT_ID = "message.participant.id";
-	public static String CONNECTION_FACTORY = "jmsQueueConnectionFactory";
+	public static String CONNECTION_FACTORY = "singleConnectionFactory";
 	public static String MESSAGE_TYPE = "message.type";
 	public static String MESSAGE_FORMAT = "message.format";
 	public static String MESSAGE_STARTS = "message.starts.";
