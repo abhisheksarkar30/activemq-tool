@@ -1,2 +1,2 @@
 # activemq-tool
-Uploades, Transfers, Downloads messages from Queue via main connection or REST
+Uploades, Transfers, Downloads messages in bulk from/to Queue via OpenWire Connection
