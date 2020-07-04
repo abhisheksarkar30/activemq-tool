@@ -9,6 +9,9 @@ Uploades, Transfers, Downloads messages in bulk from/to Queue via OpenWire Conne
 ## Prerequisites
 Java 7+, ActiveMQ 5.14.5+
 
+## Usage
+java -jar activemq-tool-1.jar or launch.bat(windows)
+
 ## Configuration
 The tool doesn't take any CLI arguments, rather it works on the configuration.properties file under apps/conf directory.
 Each parameter has its own comment to indicate its use. Broadly we are having these classifications supported by this tool:
