@@ -21,15 +21,15 @@ Each parameter has its own comment to indicate its use. Broadly we are having th
  - Transfer/Copy
  - Download
  
- ### Message Types
+### Message Types
  - Binary
  - Text
  
- ### Text Message type Formats
+### Text Message type Formats
  - XML
  - SWIFT
  
- ## Notes to follow
+## Notes to follow
  Considering above classifications supported, below are the expectations:
   - This tool is specific to Queue operations, topics not yet considered/tested.
   - Binary messages are uploaded/downloaded one message per file but transfer all at a time.
