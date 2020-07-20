@@ -4,7 +4,7 @@
 ------------
 
 
-Uploades, Transfers, Downloads messages in bulk from/to Queue via OpenWire Connection(over TCP)
+Uploades, Transfers, Downloads messages in bulk from/to Queue via OpenWire Connection(over TCP/HTTP)
 
 ## Prerequisites
 Java 7+, ActiveMQ 5.14.5+
