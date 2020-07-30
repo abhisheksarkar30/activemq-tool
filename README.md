@@ -17,7 +17,7 @@ The tool doesn't take any CLI arguments, rather it works on the configuration.pr
 Each parameter has its own comment to indicate its use. Broadly we are having these classifications supported by this tool:
 
 ### Actions
- - Upload
+ - Upload (currently tested 25K text messages uploaded within 30sec from linux VM)
  - Transfer/Copy
  - Download
  
