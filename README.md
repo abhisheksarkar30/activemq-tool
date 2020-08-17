@@ -2,9 +2,13 @@
 ![](https://img.shields.io/badge/Release-V1.0.0-blue.svg) ![](https://img.shields.io/badge/Build-Stable-green.svg) [![License](https://img.shields.io/badge/License-Apache%202.0-red.svg)](https://opensource.org/licenses/Apache-2.0) ![](https://img.shields.io/badge/By-Abhishek%20Sarkar-red.svg?style=social&logo=appveyor)
 
 ------------
+Let's connect 👨‍💻 and forge the future together.😁✌
 
+**Show your support a :star: is all this repo needs** :smile:
+<br><br>
 
-Uploades, Transfers, Downloads messages in bulk from/to Queue via OpenWire Connection(over TCP/HTTP)
+## Introduction
+Uploads, Transfers/Copies, Downloads messages in bulk from/to Queue via OpenWire Connection(over TCP/HTTP)
 
 ## Prerequisites
 Java 7+, ActiveMQ 5.14.5+
