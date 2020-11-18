@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.abhi.tools.activemq;
+package edu.abhi.tools.activemq.action;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;

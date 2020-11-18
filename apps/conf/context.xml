@@ -30,14 +30,16 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 	</bean>
 	
-	<bean id="ResourceLoader" class="edu.abhi.tools.activemq.ResourceLoader" init-method="init"/>
+	<bean id="ResourceLoader" class="edu.abhi.tools.activemq.utils.ResourceLoader" init-method="init"/>
 	
-	<bean id="BinaryMessageUploader" class="edu.abhi.tools.activemq.upload.BinaryMessageUploader" />
-	<bean id="BinaryMessageDownloader" class="edu.abhi.tools.activemq.download.BinaryMessageDownloader" />
-	<bean id="BinaryMessageTransferrer" class="edu.abhi.tools.activemq.transfer.GenericMessageTransferrer" />
+	<bean id="BinaryMessageUploader" class="edu.abhi.tools.activemq.action.upload.BinaryMessageUploader" />
+	<bean id="BinaryMessageDownloader" class="edu.abhi.tools.activemq.action.download.BinaryMessageDownloader" />
+	<bean id="BinaryMessageTransferrer" class="edu.abhi.tools.activemq.action.transfer.GenericMessageTransferrer" />
+	<bean id="BinaryMessageConsumer" class="edu.abhi.tools.activemq.action.consume.GenericMessageConsumer" />
 	
-	<bean id="TextMessageUploader" class="edu.abhi.tools.activemq.upload.TextMessageUploader" />
-	<bean id="TextMessageDownloader" class="edu.abhi.tools.activemq.download.TextMessageDownloader" />
-	<bean id="TextMessageTransferrer" class="edu.abhi.tools.activemq.transfer.GenericMessageTransferrer" />
+	<bean id="TextMessageUploader" class="edu.abhi.tools.activemq.action.upload.TextMessageUploader" />
+	<bean id="TextMessageDownloader" class="edu.abhi.tools.activemq.action.download.TextMessageDownloader" />
+	<bean id="TextMessageTransferrer" class="edu.abhi.tools.activemq.action.transfer.GenericMessageTransferrer" />
+	<bean id="TextMessageConsumer" class="edu.abhi.tools.activemq.action.consume.GenericMessageConsumer" />
 	
 </beans>

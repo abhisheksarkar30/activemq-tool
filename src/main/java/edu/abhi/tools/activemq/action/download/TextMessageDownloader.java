@@ -1,31 +1,30 @@
 /**
  * 
  */
-package edu.abhi.tools.activemq.download;
+package edu.abhi.tools.activemq.action.download;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Enumeration;
 
-import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
-import edu.abhi.tools.activemq.Constants;
-import edu.abhi.tools.activemq.GenericMessageAction;
-import edu.abhi.tools.activemq.ResourceLoader;
+import edu.abhi.tools.activemq.action.GenericMessageAction;
+import edu.abhi.tools.activemq.constants.Constants;
+import edu.abhi.tools.activemq.utils.ResourceLoader;
 
 /**
  * @author abhisheksa
  *
  */
-public class BinaryMessageDownloader extends GenericMessageAction {
+public class TextMessageDownloader extends GenericMessageAction {
 	
 	int count = 0;
 	
@@ -45,15 +44,19 @@ public class BinaryMessageDownloader extends GenericMessageAction {
 			session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
 			Queue destQueue = session.createQueue(queueName);
 			browser = session.createBrowser(destQueue);
-			Enumeration<BytesMessage> enumeration = browser.getEnumeration();
+			Enumeration<TextMessage> enumeration = browser.getEnumeration();
 			connection.start();
-			String fileNameConv = folderLocation + File.separator + "binaryMsg-" + System.currentTimeMillis() + "-";
+			String fileName = folderLocation + File.separator + "textMsg-" + System.currentTimeMillis() + ".txt";
 			
 			while(enumeration.hasMoreElements()) {
-				BytesMessage msg = enumeration.nextElement();
-				downloadToFile(msg, fileNameConv);
+				try (FileWriter fw = new FileWriter(fileName, true)) {
+					TextMessage msg = enumeration.nextElement();
+					System.out.println("Writing message(s) : " + ++count);				
+					fw.write(msg.getText() + "\n\n");
+				}
 			}
 			session.commit();
+			System.out.println("Text Message generated in file = " + fileName);
 		} catch (JMSException | IOException e) {
 			System.out.println("Failed to download message. Make sure MQ is connected");
 			e.printStackTrace();
@@ -66,19 +69,6 @@ public class BinaryMessageDownloader extends GenericMessageAction {
 		
 		System.out.println("No. of Message(s) successfully downloaded = " + count);
 		System.exit(0);
-	}
-
-	private void downloadToFile(BytesMessage msg, String fileNameConv)
-			throws IOException, JMSException {
-		long length = msg.getBodyLength();
-		
-		String currFileName = fileNameConv + ++count;
-		try (OutputStream fout = new FileOutputStream(currFileName)) {
-			for(long i=1;i<=length;i++){
-				fout.write(msg.readByte());
-			}
-		}
-		System.out.println("Binary Message generated in file = " + currFileName);
 	}
 
 }

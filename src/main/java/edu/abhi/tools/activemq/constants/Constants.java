@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.abhi.tools.activemq;
+package edu.abhi.tools.activemq.constants;
 
 /**
  * @author abhisheksa

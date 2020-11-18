@@ -3,6 +3,7 @@
  */
 package edu.abhi.tools.activemq;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.jms.ConnectionFactory;
@@ -10,6 +11,11 @@ import javax.jms.JMSException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import edu.abhi.tools.activemq.action.GenericMessageAction;
+import edu.abhi.tools.activemq.constants.ActionType;
+import edu.abhi.tools.activemq.constants.Constants;
+import edu.abhi.tools.activemq.utils.ResourceLoader;
 
 /**
  * @author abhisheksa
@@ -70,7 +76,7 @@ public class ApplicationLoader {
 			System.exit(-1);
 		}
 		
-		if(actionTypeEnum != ActionType.TRANSFER) {
+		if(Arrays.asList(ActionType.UPLOAD, ActionType.DOWNLOAD).contains(actionTypeEnum)) {
 			String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
 			if (folderLocation == null || folderLocation.isEmpty()) {
 				System.out.println("Please provide folder location from where message will be loaded");
@@ -91,13 +97,15 @@ public class ApplicationLoader {
 					System.exit(-1);
 				}
 			}
-		} else {
+		} else if(actionTypeEnum == ActionType.TRANSFER) {
 			String queue2Name = ResourceLoader.getResourceProperty(Constants.QUEUE2_NAME);
 			
 			if (queue2Name == null || queue2Name.isEmpty()) {
 				System.out.println("Please provide Queue2 name");
 				System.exit(-1);
 			}
+		} else {
+			//No-Ops
 		}
 	}
 

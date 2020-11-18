@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.abhi.tools.activemq;
+package edu.abhi.tools.activemq.constants;
 
 /**
  * @author abhisheksa
@@ -9,7 +9,7 @@ package edu.abhi.tools.activemq;
  */
 public enum ActionType {
 	
-	UPLOAD("Uploader"), TRANSFER("Transferrer"), DOWNLOAD("Downloader");
+	UPLOAD("Uploader"), TRANSFER("Transferrer"), DOWNLOAD("Downloader"), CONSUME("Consumer");
 	
 	String actor;
 	

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.abhi.tools.activemq.upload;
+package edu.abhi.tools.activemq.action.upload;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +17,9 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 
-import edu.abhi.tools.activemq.Constants;
-import edu.abhi.tools.activemq.GenericMessageAction;
-import edu.abhi.tools.activemq.ResourceLoader;
+import edu.abhi.tools.activemq.action.GenericMessageAction;
+import edu.abhi.tools.activemq.constants.Constants;
+import edu.abhi.tools.activemq.utils.ResourceLoader;
 
 /**
  * @author abhisheksa
