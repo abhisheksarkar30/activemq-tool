@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.abhi.tools.activemq</groupId>
 	<artifactId>activemq-tool</artifactId>
-	<version>1</version>
+	<version>1.1</version>
 	<name>activemq-tool</name>
 	<description>A tool to upload, transfer/copy, download messages</description>
 
