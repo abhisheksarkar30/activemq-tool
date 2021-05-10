@@ -8,7 +8,7 @@ Let's connect 👨‍💻 and forge the future together.😁✌
 <br><br>
 
 ## Introduction
-Uploads, Transfers/Copies, Downloads messages in bulk from/to Queue via OpenWire Connection(over TCP/HTTP)
+Uploads, Transfers/Copies, Downloads, Consumes messages in bulk from/to Queue via OpenWire Connection(over TCP/HTTP)
 
 ## Prerequisites
 Java 7+, ActiveMQ 5.14.5+
@@ -24,6 +24,7 @@ Each parameter has its own comment to indicate its use. Broadly we are having th
  - Upload (currently tested 25K text messages uploaded within 30sec from linux VM)
  - Transfer/Copy
  - Download
+ - Consume
  
 ### Message Types
  - Binary
