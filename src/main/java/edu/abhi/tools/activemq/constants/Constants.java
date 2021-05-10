@@ -12,7 +12,7 @@ public class Constants {
 	public static String QUEUE1_NAME = "queue1.name";
 	public static String QUEUE2_NAME = "queue2.name";
 	public static String ACTION_TYPE = "activemq.action";
-	public static String FOLDER_LOCATION = "message.upload.folder";
+	public static String FOLDER_LOCATION = "message.folder";
 	public static String PARTICIPANT_ID = "message.participant.id";
 	public static String CONNECTION_FACTORY = "singleConnectionFactory";
 	public static String MESSAGE_TYPE = "message.type";
