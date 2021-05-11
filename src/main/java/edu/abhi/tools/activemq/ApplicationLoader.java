@@ -3,8 +3,8 @@
  */
 package edu.abhi.tools.activemq;
 
+import java.io.File;
 import java.util.Arrays;
-import java.util.Properties;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -32,10 +32,14 @@ public class ApplicationLoader {
 	 */
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws JMSException {
-		
 		ApplicationContext context = new ClassPathXmlApplicationContext("context.xml");
-		
-		validateProperties(ResourceLoader.getResource());
+
+		if(args.length > 0)
+			ResourceLoader.init(args[0]);
+		else
+			System.out.println("Config file path missing!");
+
+		validateResourceProperties();
 		
 		String targetBeanId = messageType.equalsIgnoreCase(Constants.CONST_BINARY)? Constants.CONST_BINARY : Constants.CONST_TEXT;
 		targetBeanId += Constants.CONST_MSG + actionTypeEnum.getActor();
@@ -44,7 +48,7 @@ public class ApplicationLoader {
 		bean.process(context.getBean(Constants.CONNECTION_FACTORY, ConnectionFactory.class));
 	}
 	
-	private static void validateProperties(Properties properties) {
+	private static void validateResourceProperties() {
 		String queue1Name = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
 		String actionType = ResourceLoader.getResourceProperty(Constants.ACTION_TYPE);
@@ -79,8 +83,12 @@ public class ApplicationLoader {
 		if(Arrays.asList(ActionType.UPLOAD, ActionType.DOWNLOAD).contains(actionTypeEnum)) {
 			String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
 			if (folderLocation == null || folderLocation.isEmpty()) {
-				System.out.println("Please provide folder location from where message will be loaded");
+				System.out.println("Please provide folder location from/to where message will be (up/down)loaded");
 				System.exit(-1);
+			} else {
+				File dir = new File(folderLocation);
+				if(!dir.exists() && !dir.mkdirs())
+					System.out.println("Specified directory doesn't exist and couldn't be created!");
 			}
 		
 			if(actionTypeEnum == ActionType.UPLOAD) {

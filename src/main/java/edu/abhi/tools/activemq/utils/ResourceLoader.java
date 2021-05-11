@@ -3,13 +3,12 @@
  */
 package edu.abhi.tools.activemq.utils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author abhisheksa
@@ -18,13 +17,11 @@ import org.springframework.core.io.ClassPathResource;
 public class ResourceLoader {
 	
 	private static final Properties resources = new Properties();
-	
+
 	private ResourceLoader() {}
-	
-	public void init() {
-		ClassPathResource context = new ClassPathResource("configure.properties");
-		
-		try(InputStream is = context.getInputStream()) {
+
+	public static void init(String filePath) {
+		try(InputStream is = new FileInputStream(filePath)) {
 			resources.load(is);
 		} catch (IOException e) {
 			System.out.println(e);

@@ -25,12 +25,10 @@
 	<bean id="jmsProperties"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
-			<list><value>configure.properties</value></list>
+			<list><value>connection.properties</value></list>
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 	</bean>
-	
-	<bean id="ResourceLoader" class="edu.abhi.tools.activemq.utils.ResourceLoader" init-method="init"/>
 	
 	<bean id="BinaryMessageUploader" class="edu.abhi.tools.activemq.action.upload.BinaryMessageUploader" />
 	<bean id="BinaryMessageDownloader" class="edu.abhi.tools.activemq.action.download.BinaryMessageDownloader" />
