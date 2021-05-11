@@ -24,7 +24,8 @@ import edu.abhi.tools.activemq.utils.ResourceLoader;
  */
 public class GenericMessageTransferrer extends GenericMessageAction {
 	
-	int count = 0;
+	private int count = 0;
+	private int exitCode = 0;
 	
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -57,10 +58,12 @@ public class GenericMessageTransferrer extends GenericMessageAction {
 				}
 			}
 			session.commit();
+			System.out.println("Total No. of Message(s) successfully transferred/copied = " + count);
 		} catch (JMSException e) {
 			System.out.println("Failed to transfer/copy message. Make sure MQ is connected");
 			e.printStackTrace();
 			session.rollback();
+			exitCode = -1;
 		} finally {
 			if(browser != null) browser.close();
 			if(producer != null) producer.close();
@@ -68,8 +71,7 @@ public class GenericMessageTransferrer extends GenericMessageAction {
 			if(connection != null) connection.close();
 		}
 		
-		System.out.println("Total No. of Message(s) successfully transferred/copied = " + count);
-		System.exit(0);
+		System.exit(exitCode);
 	}
 
 }

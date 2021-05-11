@@ -24,9 +24,11 @@ import edu.abhi.tools.activemq.utils.ResourceLoader;
  *
  */
 public class TextMessageUploader extends GenericMessageAction {
-	
-	int count = 0;
-	String msgStartsWith, msgEndsWith;
+
+	private int count = 0;
+	private int exitCode = 0;
+	private String msgStartsWith, msgEndsWith;
+	private boolean defaultMessageFormat = false;
 	
 	@Override
 	public void process(ConnectionFactory cf) throws JMSException {
@@ -37,9 +39,10 @@ public class TextMessageUploader extends GenericMessageAction {
 		String uploadQueueName = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
 		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
-		String messsageFormat = ResourceLoader.getResourceProperty(Constants.MESSAGE_FORMAT);
-		msgStartsWith = ResourceLoader.getResourceProperty(Constants.MESSAGE_STARTS + messsageFormat);
-		msgEndsWith = ResourceLoader.getResourceProperty(Constants.MESSAGE_ENDS + messsageFormat);
+		String messageFormat = ResourceLoader.getResourceProperty(Constants.MESSAGE_FORMAT);
+		defaultMessageFormat = messageFormat.equalsIgnoreCase(Constants.CONST_DEFAULT);
+		msgStartsWith = ResourceLoader.getResourceProperty(Constants.MESSAGE_STARTS + messageFormat);
+		msgEndsWith = ResourceLoader.getResourceProperty(Constants.MESSAGE_ENDS + messageFormat);
 
 		System.out.println("****** Uploading message(s) to queue *******");
 		try {
@@ -55,17 +58,19 @@ public class TextMessageUploader extends GenericMessageAction {
 					System.out.println("Message successfully uploaded to [" + uploadQueueName + "] Queue.");
 				}
 			session.commit();
+			System.out.println("No. of Message(s) successfully uploaded = " + count);
 		} catch (JMSException | IOException e) {
 			System.out.println("Failed to upload message. Make sure MQ is connected");
 			e.printStackTrace();
 			session.rollback();
+			exitCode = -1;
 		} finally {
 			if(producer != null) producer.close();
 			if(session != null) session.close();
 			if(connection != null) connection.close();
 		}
-		
-		System.out.println("No. of Message(s) successfully uploaded = " + count);
+
+		System.exit(exitCode);
 	}
 
 	private void uploadFromFile(File fileEntry, Session session, MessageProducer producer, String participantId)
@@ -78,12 +83,13 @@ public class TextMessageUploader extends GenericMessageAction {
 		
 		while(sc.hasNextLine()) {
 			String line = sc.nextLine();
-			if(line.startsWith(msgStartsWith)) {
-				currMsg += line + "\n";
-			} else if(!currMsg.isEmpty()) {
-				currMsg += line + "\n";
+			if(currMsg.isEmpty()) {
+				if((defaultMessageFormat && !line.isEmpty()) || (!defaultMessageFormat && line.startsWith(msgStartsWith)))
+					currMsg += line + "\n";
+			} else {
+				currMsg += defaultMessageFormat && line.isEmpty()? "" : line + "\n";
 				
-				if(line.startsWith(msgEndsWith)) {
+				if((defaultMessageFormat && line.isEmpty()) || (!defaultMessageFormat && line.startsWith(msgEndsWith))) {
 					TextMessage txtMessage = session.createTextMessage(currMsg);
 					for (int i = 0; i < Integer.parseInt(participantId); i++) {
 						producer.send(txtMessage);

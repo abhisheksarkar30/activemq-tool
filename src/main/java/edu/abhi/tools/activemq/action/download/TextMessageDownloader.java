@@ -25,8 +25,9 @@ import edu.abhi.tools.activemq.utils.ResourceLoader;
  *
  */
 public class TextMessageDownloader extends GenericMessageAction {
-	
-	int count = 0;
+
+	private int count = 0;
+	private int exitCode = 0;
 	
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -56,19 +57,21 @@ public class TextMessageDownloader extends GenericMessageAction {
 				}
 			}
 			session.commit();
-			System.out.println("Text Message generated in file = " + fileName);
+			if(count > 0)
+				System.out.println("Text Message generated in file = " + fileName);
+			System.out.println("No. of Message(s) successfully downloaded = " + count);
 		} catch (JMSException | IOException e) {
 			System.out.println("Failed to download message. Make sure MQ is connected");
 			e.printStackTrace();
 			session.rollback();
+			exitCode = -1;
 		} finally {
 			if(browser != null) browser.close();
 			if(session != null) session.close();
 			if(connection != null) connection.close();
 		}
-		
-		System.out.println("No. of Message(s) successfully downloaded = " + count);
-		System.exit(0);
+
+		System.exit(exitCode);
 	}
 
 }

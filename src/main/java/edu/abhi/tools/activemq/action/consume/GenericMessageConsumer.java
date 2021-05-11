@@ -21,8 +21,9 @@ import edu.abhi.tools.activemq.utils.ResourceLoader;
  *
  */
 public class GenericMessageConsumer extends GenericMessageAction {
-	
-	int count = 0;
+
+	private int count = 0;
+	private int exitCode = 0;
 	
 	@Override
 	public void process(ConnectionFactory cf) throws JMSException {
@@ -37,12 +38,11 @@ public class GenericMessageConsumer extends GenericMessageAction {
 		try {
 			connection = cf.createConnection();
 			connection.start();
-			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
 			Queue destQueue = session.createQueue(uploadQueueName);
 			consumer = session.createConsumer(destQueue);
 			
 			while(true) {
-
 				message = consumer.receive(1000);
 				
 				if(message == null) break;
@@ -57,11 +57,13 @@ public class GenericMessageConsumer extends GenericMessageAction {
 					System.out.println("Received: " + message);
 				}
 			}
-			
+			session.commit();
+			System.out.println("No. of Message(s) successfully consumed = " + count);
 		} catch (JMSException e) {
 			System.out.println("Failed to consume message. Make sure MQ is connected");
 			e.printStackTrace();
 			session.rollback();
+			exitCode = -1;
 		} finally {
 			if(consumer != null) consumer.close();
 			if(session != null) session.close();
@@ -70,8 +72,8 @@ public class GenericMessageConsumer extends GenericMessageAction {
 				connection.close();
 			}
 		}
-		
-		System.out.println("No. of Message(s) successfully consumed = " + count);
+
+		System.exit(exitCode);
 	}
 
 }

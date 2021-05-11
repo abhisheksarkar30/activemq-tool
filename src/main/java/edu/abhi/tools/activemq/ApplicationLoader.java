@@ -32,12 +32,14 @@ public class ApplicationLoader {
 	 */
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws JMSException {
-		ApplicationContext context = new ClassPathXmlApplicationContext("context.xml");
+		if(args.length > 1) {
+			ResourceLoader.init(args[1]);
+		} else {
+			System.out.println("Context file name or Config file path missing!");
+			System.exit(-1);
+		}
 
-		if(args.length > 0)
-			ResourceLoader.init(args[0]);
-		else
-			System.out.println("Config file path missing!");
+		ApplicationContext context = new ClassPathXmlApplicationContext(args[0]);
 
 		validateResourceProperties();
 		
@@ -47,7 +49,7 @@ public class ApplicationLoader {
 		GenericMessageAction bean = context.getBean(targetBeanId, GenericMessageAction.class);
 		bean.process(context.getBean(Constants.CONNECTION_FACTORY, ConnectionFactory.class));
 	}
-	
+
 	private static void validateResourceProperties() {
 		String queue1Name = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
@@ -58,12 +60,12 @@ public class ApplicationLoader {
 			System.out.println("Please provide Queue1 name");
 			System.exit(-1);
 		}
-		
+
 		if (participantId == null || participantId.isEmpty()) {
 			System.out.println("Please provide participant id");
 			System.exit(-1);
 		}
-		
+
 		if (actionType == null || actionType.isEmpty()) {
 			System.out.println("Please provide action type");
 			System.exit(-1);
@@ -74,12 +76,12 @@ public class ApplicationLoader {
 				System.exit(-1);
 			}
 		}
-		
+
 		if (!Constants.CONST_BINARY.equalsIgnoreCase(messageType) && !Constants.CONST_TEXT.equalsIgnoreCase(messageType)) {
 			System.out.println("Please provide binary/text message type");
 			System.exit(-1);
 		}
-		
+
 		if(Arrays.asList(ActionType.UPLOAD, ActionType.DOWNLOAD).contains(actionTypeEnum)) {
 			String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
 			if (folderLocation == null || folderLocation.isEmpty()) {
@@ -90,14 +92,15 @@ public class ApplicationLoader {
 				if(!dir.exists() && !dir.mkdirs())
 					System.out.println("Specified directory doesn't exist and couldn't be created!");
 			}
-		
+
 			if(actionTypeEnum == ActionType.UPLOAD) {
 				String messageFormat = ResourceLoader.getResourceProperty(Constants.MESSAGE_FORMAT);
 				if (messageFormat == null || messageFormat.isEmpty()) {
-					System.out.println("Please provide message type : xml/swift ");
+					System.out.println("Please provide message type : xml/swift/default ");
 					System.exit(-1);
-				}
-				
+				} else if(messageFormat.equalsIgnoreCase(Constants.CONST_DEFAULT))
+					return;
+
 				String firstLineStarts = ResourceLoader.getResourceProperty(Constants.MESSAGE_STARTS + messageFormat);
 				String lastLineStarts = ResourceLoader.getResourceProperty(Constants.MESSAGE_ENDS + messageFormat);
 				if (firstLineStarts == null || firstLineStarts.isEmpty() || lastLineStarts == null || lastLineStarts.isEmpty()) {
@@ -107,7 +110,7 @@ public class ApplicationLoader {
 			}
 		} else if(actionTypeEnum == ActionType.TRANSFER) {
 			String queue2Name = ResourceLoader.getResourceProperty(Constants.QUEUE2_NAME);
-			
+
 			if (queue2Name == null || queue2Name.isEmpty()) {
 				System.out.println("Please provide Queue2 name");
 				System.exit(-1);

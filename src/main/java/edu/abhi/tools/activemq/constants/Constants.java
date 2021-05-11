@@ -21,7 +21,7 @@ public class Constants {
 	public static String MESSAGE_ENDS = "message.ends.";
 	
 	
-	public static String CONST_YES = "Y";
+	public static String CONST_DEFAULT = "default";
 	public static String CONST_BINARY = "Binary";
 	public static String CONST_TEXT = "Text";
 	public static String CONST_MSG = "Message";

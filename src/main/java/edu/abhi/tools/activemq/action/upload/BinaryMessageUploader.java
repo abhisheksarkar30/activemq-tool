@@ -26,8 +26,9 @@ import edu.abhi.tools.activemq.utils.ResourceLoader;
  *
  */
 public class BinaryMessageUploader extends GenericMessageAction {
-	
-	int count = 0;
+
+	private int count = 0;
+	private int exitCode = 0;
 	
 	@Override
 	public void process(ConnectionFactory cf) throws JMSException {
@@ -54,17 +55,19 @@ public class BinaryMessageUploader extends GenericMessageAction {
 					count++;
 				}
 			session.commit();
+			System.out.println("No. of Message(s) successfully uploaded = " + count);
 		} catch (JMSException | IOException e) {
 			System.out.println("Failed to upload message. Make sure MQ is connected");
 			e.printStackTrace();
 			session.rollback();
+			exitCode = -1;
 		} finally {
 			if(producer != null) producer.close();
 			if(session != null) session.close();
 			if(connection != null) connection.close();
 		}
-		
-		System.out.println("No. of Message(s) successfully uploaded = " + count);
+
+		System.exit(exitCode);
 	}
 
 	private void uploadFromFile(File fileEntry, Session session, MessageProducer producer, String participantId)
