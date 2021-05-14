@@ -6,6 +6,8 @@ package edu.abhi.tools.activemq.action.download;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
 import javax.jms.Connection;
@@ -38,6 +40,9 @@ public class TextMessageDownloader extends GenericMessageAction {
 		
 		String queueName = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
+		String datePattern = ResourceLoader.getResourceProperty(Constants.FILE_DATE_PATTERN);
+		String formattedDate = datePattern != null && !datePattern.isEmpty()? new SimpleDateFormat(datePattern)
+				.format(new Date()) : "" + System.currentTimeMillis();
 
 		System.out.println("****** Downloading message(s) from queue *******");
 		try {
@@ -47,7 +52,8 @@ public class TextMessageDownloader extends GenericMessageAction {
 			browser = session.createBrowser(destQueue);
 			Enumeration<TextMessage> enumeration = browser.getEnumeration();
 			connection.start();
-			String fileName = folderLocation + File.separator + "textMsg-" + System.currentTimeMillis() + ".txt";
+
+			String fileName = folderLocation + File.separator + String.format("textMsg-%s-%s.txt", queueName, formattedDate);
 			
 			while(enumeration.hasMoreElements()) {
 				try (FileWriter fw = new FileWriter(fileName, true)) {

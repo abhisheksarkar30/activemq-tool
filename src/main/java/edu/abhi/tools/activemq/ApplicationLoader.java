@@ -32,17 +32,10 @@ public class ApplicationLoader {
 	 */
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws JMSException {
-		if(args.length > 1) {
-			ResourceLoader.init(args[1]);
-		} else {
-			System.out.println("Context file name or Config file path missing!");
-			System.exit(-1);
-		}
+		loadResourceProperties(args);
 
 		ApplicationContext context = new ClassPathXmlApplicationContext(args[0]);
 
-		validateResourceProperties();
-		
 		String targetBeanId = messageType.equalsIgnoreCase(Constants.CONST_BINARY)? Constants.CONST_BINARY : Constants.CONST_TEXT;
 		targetBeanId += Constants.CONST_MSG + actionTypeEnum.getActor();
 		
@@ -50,7 +43,16 @@ public class ApplicationLoader {
 		bean.process(context.getBean(Constants.CONNECTION_FACTORY, ConnectionFactory.class));
 	}
 
-	private static void validateResourceProperties() {
+	private static void loadResourceProperties(String[] args) {
+		//init
+		if(args.length > 1) {
+			ResourceLoader.init(args[1]);
+		} else {
+			System.out.println("Context file name or Config file path missing!");
+			System.exit(-1);
+		}
+
+		//validate
 		String queue1Name = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
 		String actionType = ResourceLoader.getResourceProperty(Constants.ACTION_TYPE);

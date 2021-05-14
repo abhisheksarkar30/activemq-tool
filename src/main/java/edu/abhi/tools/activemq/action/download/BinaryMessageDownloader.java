@@ -3,23 +3,18 @@
  */
 package edu.abhi.tools.activemq.action.download;
 
+import edu.abhi.tools.activemq.action.GenericMessageAction;
+import edu.abhi.tools.activemq.constants.Constants;
+import edu.abhi.tools.activemq.utils.ResourceLoader;
+
+import javax.jms.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
-
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
-
-import edu.abhi.tools.activemq.action.GenericMessageAction;
-import edu.abhi.tools.activemq.constants.Constants;
-import edu.abhi.tools.activemq.utils.ResourceLoader;
 
 /**
  * @author abhisheksa
@@ -39,6 +34,10 @@ public class BinaryMessageDownloader extends GenericMessageAction {
 		
 		String queueName = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
+		String datePattern = ResourceLoader.getResourceProperty(Constants.FILE_DATE_PATTERN);
+		String formattedDate = datePattern != null && !datePattern.isEmpty()? new SimpleDateFormat(datePattern)
+				.format(new Date()) : "" + System.currentTimeMillis();
+
 
 		System.out.println("****** Downloading message(s) from queue *******");
 		try {
@@ -48,7 +47,8 @@ public class BinaryMessageDownloader extends GenericMessageAction {
 			browser = session.createBrowser(destQueue);
 			Enumeration<BytesMessage> enumeration = browser.getEnumeration();
 			connection.start();
-			String fileNameConv = folderLocation + File.separator + "binaryMsg-" + System.currentTimeMillis() + "-";
+
+			String fileNameConv = folderLocation + File.separator + String.format("binaryMsg-%s-%s-", queueName, formattedDate);
 			
 			while(enumeration.hasMoreElements()) {
 				BytesMessage msg = enumeration.nextElement();

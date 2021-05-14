@@ -52,9 +52,9 @@ public class GenericMessageConsumer extends GenericMessageAction {
 				if (message instanceof TextMessage) {
 					TextMessage textMessage = (TextMessage) message;
 					String text = textMessage.getText();
-					System.out.println("Received: " + text);
+					System.out.println("Received:- \n" + text);
 				} else {
-					System.out.println("Received: " + message);
+					System.out.println("Received:- \n" + message);
 				}
 			}
 			session.commit();

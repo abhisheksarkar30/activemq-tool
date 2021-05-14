@@ -19,8 +19,8 @@ public class Constants {
 	public static String MESSAGE_FORMAT = "message.format";
 	public static String MESSAGE_STARTS = "message.starts.";
 	public static String MESSAGE_ENDS = "message.ends.";
-	
-	
+	public static String FILE_DATE_PATTERN = "file.date.pattern";
+
 	public static String CONST_DEFAULT = "default";
 	public static String CONST_BINARY = "Binary";
 	public static String CONST_TEXT = "Text";
