@@ -40,6 +40,7 @@ public class TextMessageDownloader extends GenericMessageAction {
 		
 		String queueName = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
 		String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
+		boolean multipleMessage = Constants.CONST_YES.equalsIgnoreCase(ResourceLoader.getResourceProperty(Constants.MESSAGE_MULTIPLE));
 		String datePattern = ResourceLoader.getResourceProperty(Constants.FILE_DATE_PATTERN);
 		String formattedDate = datePattern != null && !datePattern.isEmpty()? new SimpleDateFormat(datePattern)
 				.format(new Date()) : "" + System.currentTimeMillis();
@@ -53,18 +54,20 @@ public class TextMessageDownloader extends GenericMessageAction {
 			Enumeration<TextMessage> enumeration = browser.getEnumeration();
 			connection.start();
 
-			String fileName = folderLocation + File.separator + String.format("textMsg-%s-%s.txt", queueName, formattedDate);
+			String fileName = folderLocation + File.separator + String.format("textMsg-%s-%s-", queueName, formattedDate);
+			String currFileName = fileName;
 			
 			while(enumeration.hasMoreElements()) {
-				try (FileWriter fw = new FileWriter(fileName, true)) {
+				currFileName = fileName + (multipleMessage? 0 : ++count) + ".txt";
+				try (FileWriter fw = new FileWriter(currFileName, true)) {
 					TextMessage msg = enumeration.nextElement();
-					System.out.println("Writing message(s) : " + ++count);				
-					fw.write(msg.getText() + "\n\n");
+					fw.write(msg.getText() + (multipleMessage? "\n\n" : ""));
+					System.out.println("Writing message(s) : " + (multipleMessage? ++count : currFileName));
 				}
 			}
 			session.commit();
-			if(count > 0)
-				System.out.println("Text Message generated in file = " + fileName);
+			if(count > 0 && multipleMessage)
+				System.out.println("Text Message generated in file = " + currFileName);
 			System.out.println("No. of Message(s) successfully downloaded = " + count);
 		} catch (JMSException | IOException e) {
 			System.out.println("Failed to download message. Make sure MQ is connected");

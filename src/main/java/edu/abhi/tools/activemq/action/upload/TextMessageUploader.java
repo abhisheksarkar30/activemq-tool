@@ -28,7 +28,7 @@ public class TextMessageUploader extends GenericMessageAction {
 	private int count = 0;
 	private int exitCode = 0;
 	private String msgStartsWith, msgEndsWith;
-	private boolean defaultMessageFormat = false;
+	private boolean defaultMessageFormat = false, multipleMessage = false;
 	
 	@Override
 	public void process(ConnectionFactory cf) throws JMSException {
@@ -40,6 +40,7 @@ public class TextMessageUploader extends GenericMessageAction {
 		String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
 		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
 		String messageFormat = ResourceLoader.getResourceProperty(Constants.MESSAGE_FORMAT);
+		multipleMessage = Constants.CONST_YES.equalsIgnoreCase(ResourceLoader.getResourceProperty(Constants.MESSAGE_MULTIPLE));
 		defaultMessageFormat = messageFormat.equalsIgnoreCase(Constants.CONST_DEFAULT);
 		msgStartsWith = ResourceLoader.getResourceProperty(Constants.MESSAGE_STARTS + messageFormat);
 		msgEndsWith = ResourceLoader.getResourceProperty(Constants.MESSAGE_ENDS + messageFormat);
@@ -84,12 +85,18 @@ public class TextMessageUploader extends GenericMessageAction {
 		while(sc.hasNextLine()) {
 			String line = sc.nextLine();
 			if(currMsg.isEmpty()) {
-				if((defaultMessageFormat && !line.isEmpty()) || (!defaultMessageFormat && line.startsWith(msgStartsWith)))
+				if(!multipleMessage || (multipleMessage &&
+						((defaultMessageFormat && !line.isEmpty()) ||
+						(!defaultMessageFormat && line.startsWith(msgStartsWith))))) {
 					currMsg += line + "\n";
+				}
 			} else {
 				currMsg += defaultMessageFormat && line.isEmpty()? "" : line + "\n";
 				
-				if((defaultMessageFormat && line.isEmpty()) || (!defaultMessageFormat && line.startsWith(msgEndsWith))) {
+				if((!multipleMessage && !sc.hasNextLine()) || (multipleMessage &&
+						((defaultMessageFormat && line.isEmpty()) ||
+						(!defaultMessageFormat && line.startsWith(msgEndsWith))))) {
+
 					TextMessage txtMessage = session.createTextMessage(currMsg);
 					for (int i = 0; i < Integer.parseInt(participantId); i++) {
 						producer.send(txtMessage);
