@@ -35,16 +35,12 @@ public class GenericMessageTransferrer extends GenericMessageAction {
 		QueueBrowser browser = null;
 		MessageProducer producer = null;
 		
-		String queue1Name = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
-		String queue2Name = ResourceLoader.getResourceProperty(Constants.QUEUE2_NAME);
-		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
-
 		System.out.println("****** Transferring/copying message(s) from queue *******");
 		try {
 			connection = cf.createConnection();
 			session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
-			Queue srcQueue = session.createQueue(queue1Name);
-			Queue destQueue = session.createQueue(queue2Name);
+			Queue srcQueue = session.createQueue(getOptions().getQueue1Name());
+			Queue destQueue = session.createQueue(getOptions().getQueue2Name());
 			browser = session.createBrowser(srcQueue);
 			producer = session.createProducer(destQueue);
 			Enumeration<Message> enumeration = browser.getEnumeration();
@@ -52,7 +48,7 @@ public class GenericMessageTransferrer extends GenericMessageAction {
 			
 			while(enumeration.hasMoreElements()) {
 				Message msg = enumeration.nextElement();
-				for (int i = 0; i < Integer.parseInt(participantId); i++) {
+				for (int i = 0; i < getOptions().getMsgCopies(); i++) {
 					producer.send(msg);
 					System.out.println("No.of message(s) transferred/copied till now = " + ++count);
 				}

@@ -36,22 +36,18 @@ public class BinaryMessageUploader extends GenericMessageAction {
 		Session session = null;
 		MessageProducer producer = null;
 		
-		String uploadQueueName = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
-		String folderLocation = ResourceLoader.getResourceProperty(Constants.FOLDER_LOCATION);
-		String participantId = ResourceLoader.getResourceProperty(Constants.PARTICIPANT_ID);
-
 		System.out.println("****** Uploading message(s) to queue *******");
 		try {
 			connection = cf.createConnection();
 			session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
-			Queue destQueue = session.createQueue(uploadQueueName);
+			Queue destQueue = session.createQueue(getOptions().getQueue1Name());
 			producer = session.createProducer(destQueue);
 			
-			File folder = new File(folderLocation);
+			File folder = new File(getOptions().getFolderLocation());
 			for (File fileEntry : folder.listFiles())
 				if (fileEntry.isFile()) {
-					uploadFromFile(fileEntry, session, producer, participantId);
-					System.out.println("Message successfully uploaded to [" + uploadQueueName + "] Queue.");
+					uploadFromFile(fileEntry, session, producer);
+					System.out.println("Message successfully uploaded to [" + getOptions().getQueue1Name() + "] Queue.");
 					count++;
 				}
 			session.commit();
@@ -70,7 +66,7 @@ public class BinaryMessageUploader extends GenericMessageAction {
 		System.exit(exitCode);
 	}
 
-	private void uploadFromFile(File fileEntry, Session session, MessageProducer producer, String participantId)
+	private void uploadFromFile(File fileEntry, Session session, MessageProducer producer)
 			throws IOException, JMSException {
 		System.out.println("Uploading message from file : " + fileEntry.getName());
 		Path path = Paths.get(fileEntry.getAbsolutePath(), new String[0]);
@@ -78,7 +74,7 @@ public class BinaryMessageUploader extends GenericMessageAction {
 		BytesMessage bytesMessage = session.createBytesMessage();
 		bytesMessage.writeBytes(binaryData);
 
-		for (int i = 0; i < Integer.parseInt(participantId); i++) {
+		for (int i = 0; i < getOptions().getMsgCopies(); i++) {
 			producer.send(bytesMessage);
 		}
 	}

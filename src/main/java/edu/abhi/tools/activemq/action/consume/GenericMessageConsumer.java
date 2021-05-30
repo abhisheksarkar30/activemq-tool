@@ -3,18 +3,14 @@
  */
 package edu.abhi.tools.activemq.action.consume;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 
 import edu.abhi.tools.activemq.action.GenericMessageAction;
 import edu.abhi.tools.activemq.constants.Constants;
+import edu.abhi.tools.activemq.utils.DownloadUtils;
 import edu.abhi.tools.activemq.utils.ResourceLoader;
+
+import java.io.IOException;
 
 /**
  * @author abhisheksa
@@ -30,36 +26,41 @@ public class GenericMessageConsumer extends GenericMessageAction {
 		Connection connection = null;
 		Session session = null;
 		MessageConsumer consumer = null;
-		Message message = null;
+		Message message;
 		
-		String uploadQueueName = ResourceLoader.getResourceProperty(Constants.QUEUE1_NAME);
-
 		System.out.println("****** Consuming message(s) from queue *******");
 		try {
 			connection = cf.createConnection();
 			connection.start();
 			session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
-			Queue destQueue = session.createQueue(uploadQueueName);
+			Queue destQueue = session.createQueue(getOptions().getQueue1Name());
 			consumer = session.createConsumer(destQueue);
-			
+
 			while(true) {
 				message = consumer.receive(1000);
-				
+
 				if(message == null) break;
-				
+
 				count++;
 
 				if (message instanceof TextMessage) {
 					TextMessage textMessage = (TextMessage) message;
-					String text = textMessage.getText();
-					System.out.println("Received:- \n" + text);
+					if(getOptions().isMessageStore()) {
+						DownloadUtils.downloadToFile(textMessage, getOptions(), count);
+					} else {
+						String text = textMessage.getText();
+						System.out.println("Received:- \n" + text);
+					}
 				} else {
-					System.out.println("Received:- \n" + message);
+					if(getOptions().isMessageStore()) {
+						DownloadUtils.downloadToFile((BytesMessage) message, getOptions(), count);
+					} else
+						System.out.println("Received:- \n" + message);
 				}
 			}
 			session.commit();
 			System.out.println("No. of Message(s) successfully consumed = " + count);
-		} catch (JMSException e) {
+		} catch (JMSException | IOException e) {
 			System.out.println("Failed to consume message. Make sure MQ is connected");
 			e.printStackTrace();
 			session.rollback();

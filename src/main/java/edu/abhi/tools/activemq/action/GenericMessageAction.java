@@ -3,6 +3,10 @@
  */
 package edu.abhi.tools.activemq.action;
 
+import edu.abhi.tools.activemq.constants.Constants;
+import edu.abhi.tools.activemq.utils.ApplicationOptions;
+import edu.abhi.tools.activemq.utils.ResourceLoader;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
@@ -11,7 +15,15 @@ import javax.jms.JMSException;
  *
  */
 public abstract class GenericMessageAction {
-	
-	public abstract void process(ConnectionFactory connectionFactory)  throws JMSException;
+	private ApplicationOptions options;
 
+	public ApplicationOptions getOptions() {
+		return options;
+	}
+
+	public void setOptions(ApplicationOptions options) {
+		this.options = options;
+	}
+
+	public abstract void process(ConnectionFactory connectionFactory)  throws JMSException;
 }
